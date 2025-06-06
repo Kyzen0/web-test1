@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bookmarks - My Hub</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="icon" href="favicon.png" type="image/png">
+</head>
+
+<body>
+    <nav class="navbar">
+        <h1 class="logo">My Hub</h1>
+        <ul class="nav-links">
+            <li><a href="index.html">Home</a></li>
+            <li><a href="anime.html">Anime</a></li>
+            <li><a href="projects.html">Projects</a></li>
+            <li><a href="bookmarks.html">Bookmarks</a></li>
+            <li><a href="vault.html">Vault</a></li>
+        </ul>
+        <div class="nav-icons">
+            <button id="hamburger" class="hamburger">☰</button>
+            <button id="theme-toggle">🌓</button>
+        </div>
+    </nav>
+
+    <main class="container">
+        <section class="intro">
+            <h2>Bookmarks</h2>
+            <p>Quick links to some useful tools and websites.</p>
+        </section>
+
+        <section class="features">
+            <div class="card">
+                <h3>Tools</h3>
+                <ol id="tools-list" class="tools-list"></ol>
+                <button class="view-more" onclick="toggleView('tools')">View More</button>
+                <div class="card-footer">
+                    <input type="text" id="tools-name" placeholder="Name...">
+                    <input type="text" id="tools-url" placeholder="URL...">
+                    <div class="card-actions-bottom">
+                        <button
+                            onclick="addBookmark('tools-list', 'tools-name', 'tools-url', 'bookmarks_tools', 'tools')"
+                            class="btn-primary">Add</button>
+                        <button onclick="clearBookmarkList('tools-list', 'bookmarks_tools', 'tools')"
+                            class="btn-secondary">Clear All</button>
+                    </div>
+                    <div class="last-updated"></div>
+                </div>
+            </div>
+
+            <div class="card">
+                <h3>Entertainment</h3>
+                <ol id="entertainment-list" class="entertainment-list"></ol>
+                <button class="view-more" onclick="toggleView('entertainment')">View More</button>
+                <div class="card-footer">
+                    <input type="text" id="entertainment-name" placeholder="Name...">
+                    <input type="text" id="entertainment-url" placeholder="URL...">
+                    <div class="card-actions-bottom">
+                        <button
+                            onclick="addBookmark('entertainment-list', 'entertainment-name', 'entertainment-url', 'bookmarks_entertainment', 'entertainment')"
+                            class="btn-primary">Add</button>
+                        <button
+                            onclick="clearBookmarkList('entertainment-list', 'bookmarks_entertainment', 'entertainment')"
+                            class="btn-secondary">Clear All</button>
+                    </div>
+                    <div class="last-updated"></div>
+                </div>
+            </div>
+        </section>
+    </main>
+    <div id="customConfirmModal" class="modal-overlay">
+        <div class="modal-content">
+            <h3 id="confirmModalTitle"></h3>
+            <p id="confirmModalMessage"></p>
+            <div class="modal-buttons">
+                <button id="confirmModalOK" class="modal-btn btn-primary"></button>
+                <button id="confirmModalCancel" class="modal-btn btn-secondary"></button>
+            </div>
+        </div>
+    </div>
+
+
+    <footer>
+        <p>&copy; 2025 My Hub. Built by Zain.</p>
+    </footer>
+    <button id="scrollToTopBtn" title="Go to top">⬆️</button>
+    <script src="script.js"></script>
+</body>
+
+</html>

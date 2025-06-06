@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Anime - My Hub</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="icon" href="favicon.png" type="image/png">
+</head>
+
+<body>
+    <nav class="navbar">
+        <h1 class="logo">My Hub</h1>
+        <ul class="nav-links">
+            <li><a href="index.html">Home</a></li>
+            <li><a href="anime.html">Anime</a></li>
+            <li><a href="projects.html">Projects</a></li>
+            <li><a href="bookmarks.html">Bookmarks</a></li>
+            <li><a href="vault.html">Vault</a></li>
+        </ul>
+        <div class="nav-icons">
+            <button id="hamburger" class="hamburger">☰</button>
+            <button id="theme-toggle">🌓</button>
+        </div>
+    </nav>
+
+    <main class="container">
+        <section class="intro">
+            <h2>Anime</h2>
+            <p>Keep track of anime you're watching and have completed.</p>
+        </section>
+
+        <section class="features">
+            <div class="card">
+                <h3>Watching</h3>
+                <ol id="watching-list" class="anime-list"></ol> <button class="view-more"
+                    onclick="toggleView('watching')">View More</button>
+                <div class="card-footer">
+                    <input type="text" id="watching-input" placeholder="Add new anime...">
+                    <div class="card-actions-bottom">
+                        <button onclick="addItem('watching')" class="btn-primary">Add</button>
+                        <button onclick="clearList('watching')" class="btn-secondary">Clear All</button>
+                    </div>
+                    <div class="last-updated"></div>
+                </div>
+            </div>
+
+            <div class="card">
+                <h3>Completed</h3>
+                <ol id="completed-list" class="anime-list"></ol> <button class="view-more"
+                    onclick="toggleView('completed')">View More</button>
+                <div class="card-footer">
+                    <input type="text" id="completed-input" placeholder="Add completed anime...">
+                    <div class="card-actions-bottom">
+                        <button onclick="addItem('completed')" class="btn-primary">Add</button>
+                        <button onclick="clearList('completed')" class="btn-secondary">Clear All</button>
+                    </div>
+                    <div class="last-updated"></div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; 2025 Zain's Hub. All rights reserved.</p>
+    </footer>
+    <button id="scrollToTopBtn" title="Go to top">⬆️</button>
+
+    <div id="customConfirmModal" class="modal-overlay">
+        <div class="modal-content">
+            <h3 id="confirmModalTitle"></h3>
+            <p id="confirmModalMessage"></p>
+            <div class="modal-buttons">
+                <button id="confirmModalOK" class="modal-btn btn-primary"></button>
+                <button id="confirmModalCancel" class="modal-btn btn-secondary"></button>
+            </div>
+        </div>
+    </div>
+    <script src="script.js"></script>
+</body>
+
+</html>

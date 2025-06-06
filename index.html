@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>My Hub - Home</title>
+    <link rel="stylesheet" href="styles.css" />
+    <link rel="icon" type="image/png" href="img/profile.png" />
+</head>
+
+<body>
+    <header>
+        <nav class="navbar">
+            <h1 class="logo">My Hub</h1>
+            <ul class="nav-links">
+                <li><a href="index.html">Home</a></li>
+                <li><a href="anime.html">Anime</a></li>
+                <li><a href="projects.html">Projects</a></li>
+                <li><a href="bookmarks.html">Bookmarks</a></li>
+                <li><a href="vault.html">Vault</a></li>
+            </ul>
+            <div class="nav-icons">
+                <button id="hamburger" class="hamburger">☰</button>
+                <button id="theme-toggle">🌓</button>
+            </div>
+        </nav>
+
+    </header>
+
+    <main class="container">
+        <section class="intro">
+            <h2>Welcome to My Hub</h2>
+            <p>This is your personal space to track anime, bookmarks, and projects — all in one place.</p>
+        </section>
+
+        <section class="features">
+            <div class="card">
+                <img src="img/anime-bg.avif" alt="Anime" />
+                <h3><a href="anime.html">Anime Tracker</a></h3>
+                <p>Track what you’re watching, what you’ve completed, and what’s next.</p>
+            </div>
+            <div class="card">
+                <img src="img/projects-bg.avif" alt="Projects" />
+                <h3><a href="projects.html">Projects Vault</a></h3>
+                <p>List your ideas and ongoing or completed projects here.</p>
+            </div>
+            <div class="card">
+                <img src="img/profile.png" alt="Bookmarks" />
+                <h3><a href="bookmarks.html">Bookmark Manager</a></h3>
+                <p>Save your daily tools, sites, and important links in one place.</p>
+            </div>
+        </section>
+
+        <section class="data-management-section">
+            <h2>Data Management</h2>
+            <p>Backup or restore your lists and bookmarks.</p>
+            <div class="data-actions">
+                <button id="exportDataBtn" class="btn-secondary">Export All Data</button>
+                <input type="file" id="importFileInput" accept=".json" style="display: none;">
+                <button id="importDataBtn" class="btn-primary">Import Data</button>
+            </div>
+            <p class="data-import-note">Note: Importing data will overwrite existing lists. Please export first if you
+                wish to keep current data.</p>
+        </section>
+    </main>
+    <div id="customConfirmModal" class="modal-overlay">
+        <div class="modal-content">
+            <h3 id="confirmModalTitle"></h3>
+            <p id="confirmModalMessage"></p>
+            <div class="modal-buttons">
+                <button id="confirmModalOK" class="modal-btn btn-primary"></button>
+                <button id="confirmModalCancel" class="modal-btn btn-secondary"></button>
+            </div>
+        </div>
+    </div>
+
+
+    <footer>
+        <p>&copy; 2025 Zain's Hub. All rights reserved.</p>
+    </footer>
+    <button id="scrollToTopBtn" title="Go to top">⬆️</button>
+    <script src="script.js"></script>
+</body>
+
+</html>

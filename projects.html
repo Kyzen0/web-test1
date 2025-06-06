@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Projects - My Hub</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="icon" href="favicon.png" type="image/png">
+</head>
+
+<body>
+    <nav class="navbar">
+        <h1 class="logo">My Hub</h1>
+        <ul class="nav-links">
+            <li><a href="index.html">Home</a></li>
+            <li><a href="anime.html">Anime</a></li>
+            <li><a href="projects.html">Projects</a></li>
+            <li><a href="bookmarks.html">Bookmarks</a></li>
+            <li><a href="vault.html">Vault</a></li>
+        </ul>
+        <div class="nav-icons">
+            <button id="hamburger" class="hamburger">☰</button>
+            <button id="theme-toggle">🌓</button>
+        </div>
+    </nav>
+
+    <main class="container">
+        <section class="intro">
+            <h2>My Projects</h2>
+            <p>Quick links and notes for your ongoing and future projects.</p>
+        </section>
+
+        <section class="features">
+            <div class="card">
+                <h3>Ongoing Projects</h3>
+                <ol id="projects-list" class="project-list"></ol>
+                <button class="view-more" onclick="toggleView('projects')">View More</button>
+                <div class="card-footer">
+                    <input type="text" id="projects-input" placeholder="Add new project...">
+                    <div class="card-actions-bottom">
+                        <button onclick="addItem('projects')" class="btn-primary">Add</button>
+                        <button onclick="clearList('projects')" class="btn-secondary">Clear All</button>
+                    </div>
+                    <div class="last-updated"></div>
+                </div>
+            </div>
+
+            <div class="card">
+                <h3>Future plans</h3>
+                <ol id="upcoming-list" class="upcoming-list"></ol>
+                <button class="view-more" onclick="toggleView('upcoming')">View More</button>
+                <div class="card-footer">
+                    <input type="text" id="upcoming-input" placeholder="Add new plan...">
+                    <div class="card-actions-bottom">
+                        <button onclick="addItem('upcoming')" class="btn-primary">Add</button>
+                        <button onclick="clearList('upcoming')" class="btn-secondary">Clear All</button>
+                    </div>
+                    <div class="last-updated"></div>
+                </div>
+            </div>
+        </section>
+    </main>
+    <div id="customConfirmModal" class="modal-overlay">
+        <div class="modal-content">
+            <h3 id="confirmModalTitle"></h3>
+            <p id="confirmModalMessage"></p>
+            <div class="modal-buttons">
+                <button id="confirmModalOK" class="modal-btn btn-primary"></button>
+                <button id="confirmModalCancel" class="modal-btn btn-secondary"></button>
+            </div>
+        </div>
+    </div>
+
+
+    <footer>
+        <p>&copy; 2025 My Hub. Built by Zain.</p>
+    </footer>
+    <button id="scrollToTopBtn" title="Go to top">⬆️</button>
+    <script src="script.js"></script>
+</body>
+
+</html>

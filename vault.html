@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vault - My Hub</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="icon" href="favicon.png" type="image/png">
+    <!-- Font Awesome for eye icon -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+
+<body>
+    <nav class="navbar">
+        <h1 class="logo">My Hub</h1>
+        <ul class="nav-links">
+            <li><a href="index.html">Home</a></li>
+            <li><a href="anime.html">Anime</a></li>
+            <li><a href="projects.html">Projects</a></li>
+            <li><a href="bookmarks.html">Bookmarks</a></li>
+            <li><a href="vault.html">Vault</a></li>
+        </ul>
+        <div class="nav-icons">
+            <button id="hamburger" class="hamburger">☰</button>
+            <button id="theme-toggle">🌓</button>
+        </div>
+    </nav>
+
+    <!-- Password Protection Modal -->
+    <div id="password-modal" class="modal-overlay">
+        <div class="modal-content password-prompt">
+            <h3>Enter Vault Password</h3>
+            <p>Please enter your password to access your secure vault.</p>
+            <div class="password-input-wrapper">
+                <input type="password" id="vault-password-input" placeholder="Password">
+                <span class="password-toggle" id="vault-password-toggle">
+                    <i class="fas fa-eye"></i> <!-- Default: eye icon (show password) -->
+                </span>
+            </div>
+            <button id="vault-unlock-btn" class="modal-btn btn-primary">Unlock Vault</button>
+            <p id="password-error" class="error-message"></p>
+            <!-- Forgot Password Section -->
+            <div id="forgot-password-section" style="margin-top: 15px;">
+                <a href="#" id="forgot-password-link" class="action-btn">Forgot Password?</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Set New Password Modal (initially hidden) -->
+    <div id="set-new-password-modal" class="modal-overlay">
+        <div class="modal-content password-prompt">
+            <h3>Set New Vault Password</h3>
+            <p>You need to set a password to secure your vault. All previous vault data has been cleared (if any).</p>
+            <div class="password-input-wrapper">
+                <input type="password" id="new-password-input" placeholder="Enter new password...">
+                <span class="password-toggle" id="new-password-toggle-1">
+                    <i class="fas fa-eye"></i>
+                </span>
+            </div>
+            <div class="password-input-wrapper">
+                <input type="password" id="confirm-new-password-input" placeholder="Confirm new password...">
+                <span class="password-toggle" id="new-password-toggle-2">
+                    <i class="fas fa-eye"></i>
+                </span>
+            </div>
+            <p id="new-password-error-message" class="error-message"></p>
+            <button id="set-password-btn" class="modal-btn btn-primary">Set Password</button>
+        </div>
+    </div>
+
+    <!-- Main Vault Content (initially hidden by CSS) -->
+    <div id="vault-content" class="container">
+        <section class="intro">
+            <h2>Vault</h2>
+            <p>Securely store your accounts, notes, and other important information.</p>
+        </section>
+
+        <section class="features">
+            <div class="card">
+                <h3>Secret Links</h3>
+                <ol id="vault-links-list" class="project-list"></ol>
+                <button class="view-more" onclick="toggleView('vault-links')">View More</button>
+                <div class="card-footer">
+                    <input type="text" id="vault-links-input" placeholder="Add new link...">
+                    <div class="card-actions-bottom">
+                        <button onclick="addItem('vault-links')" class="btn-primary">Add</button>
+                        <button onclick="clearList('vault-links')" class="btn-secondary">Clear All</button>
+                    </div>
+                    <div class="last-updated"></div>
+                </div>
+            </div>
+
+            <div class="card">
+                <h3>My Notes</h3>
+                <ol id="vault-notes-list" class="note-list"></ol>
+                <button class="view-more" onclick="toggleView('vault-notes')">View More</button>
+                <div class="card-footer">
+                    <input type="text" id="vault-notes-input" placeholder="Add new note...">
+                    <div class="card-actions-bottom">
+                        <button onclick="addItem('vault-notes')" class="btn-primary">Add</button>
+                        <button onclick="clearList('vault-notes')" class="btn-secondary">Clear All</button>
+                    </div>
+                    <div class="last-updated"></div>
+                </div>
+            </div>
+        </section>
+    </div> <!-- END #vault-content -->
+
+    <!-- Custom Confirmation Modal (for general confirmations like Clear All) -->
+    <div id="customConfirmModal" class="modal-overlay">
+        <div class="modal-content">
+            <h3 id="confirmModalTitle"></h3>
+            <p id="confirmModalMessage"></p>
+            <div class="modal-buttons">
+                <button id="confirmModalOK" class="modal-btn btn-primary"></button>
+                <button id="confirmModalCancel" class="modal-btn btn-secondary"></button>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <p>&copy; 2025 My Hub. Built by Zain.</p>
+    </footer>
+    <button id="scrollToTopBtn" title="Go to top">⬆️</button>
+    <script src="vault.js"></script>
+</body>
+
+</html>
