@@ -150,15 +150,20 @@ document.addEventListener('DOMContentLoaded', () => {
     // NEW: Function to toggle item completion status (for Anime page only)
     function toggleCompletionStatus(itemName, fromListType) {
         let currentList = getList(fromListType);
-        const itemIndex = currentList.indexOf(itemName);
+        // Find the item object by name
+        const itemIndex = currentList.findIndex(item => item.name === itemName);
 
         if (itemIndex > -1) {
+            const itemToMove = currentList[itemIndex];
             currentList.splice(itemIndex, 1); // Remove from current list
             saveList(fromListType, currentList);
 
             const toListType = (fromListType === 'watching') ? 'completed' : 'watching';
             let targetList = getList(toListType);
-            targetList.push(itemName); // Add to the other list
+            
+            // Update completion status for the item being moved
+            itemToMove.completed = (toListType === 'completed');
+            targetList.push(itemToMove); // Add the updated item to the other list
             saveList(toListType, targetList);
 
             renderGenericList('watching'); // Re-render both lists
@@ -166,9 +171,14 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    function createGenericItemElement(type, name) {
+    function createGenericItemElement(type, itemData) {
         const li = document.createElement('li');
         li.setAttribute('draggable', 'true');
+        
+        // Handle both string items and object items (for anime)
+        const name = typeof itemData === 'string' ? itemData : itemData.name;
+        const completed = typeof itemData === 'object' ? itemData.completed : false;
+
         li.dataset.itemName = name;
 
         // NEW: Add checkbox for 'watching' and 'completed' lists
@@ -176,7 +186,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const checkbox = document.createElement('input');
             checkbox.type = 'checkbox';
             checkbox.className = 'item-checkbox';
-            checkbox.checked = (type === 'completed'); // Check if it's in the 'completed' list
+            checkbox.checked = completed; // Check based on the 'completed' property
 
             checkbox.addEventListener('change', () => {
                 toggleCompletionStatus(name, type);
@@ -187,6 +197,9 @@ document.addEventListener('DOMContentLoaded', () => {
         const itemTextSpan = document.createElement('span');
         itemTextSpan.className = 'item-text';
         itemTextSpan.textContent = name;
+        if (completed) { // Add class for styling if completed
+            itemTextSpan.classList.add('completed-item-text');
+        }
         li.appendChild(itemTextSpan);
 
         const actionsDiv = document.createElement('div');
@@ -197,7 +210,7 @@ document.addEventListener('DOMContentLoaded', () => {
         editBtn.className = 'action-btn';
         editBtn.onclick = (event) => {
             event.stopPropagation();
-            editGenericItem(li, name, type);
+            editGenericItem(li, itemData, type); // Pass itemData to retain 'completed' status
         };
         actionsDiv.appendChild(editBtn);
 
@@ -212,9 +225,14 @@ document.addEventListener('DOMContentLoaded', () => {
                 `Are you sure you want to delete "${name}"?`,
                 () => { // onConfirm callback
                     let list = getList(type);
-                    list = list.filter(item => item !== name);
+                    // Filter based on whether item is string or object
+                    list = list.filter(item => (typeof item === 'string' ? item !== name : item.name !== name));
                     saveList(type, list);
                     renderGenericList(type);
+                    // Re-render other anime list if current list is watching/completed
+                    if (type === 'watching' || type === 'completed') {
+                        renderGenericList(type === 'watching' ? 'completed' : 'watching');
+                    }
                 },
                 'Delete',
                 'Cancel'
@@ -225,9 +243,10 @@ document.addEventListener('DOMContentLoaded', () => {
         li.appendChild(actionsDiv);
 
         li.addEventListener('dragstart', (e) => {
-            draggedItem = { element: li, data: name, type: type };
+            // Drag the itemData (string or object)
+            draggedItem = { element: li, data: itemData, type: type };
             e.dataTransfer.effectAllowed = 'move';
-            e.dataTransfer.setData('text/plain', name);
+            e.dataTransfer.setData('text/plain', typeof itemData === 'object' ? JSON.stringify(itemData) : itemData);
             li.classList.add('dragging');
         });
 
@@ -253,11 +272,20 @@ document.addEventListener('DOMContentLoaded', () => {
 
             if (draggedItem && draggedItem.type === type && draggedItem.element !== li) {
                 const currentList = getList(type);
-                const draggedData = draggedItem.data;
-                const dropTargetData = li.dataset.itemName;
+                const draggedData = draggedItem.data; // Can be string or object
+                const dropTargetName = li.dataset.itemName; // Always a string
 
-                const draggedIndex = currentList.indexOf(draggedData);
-                const dropTargetIndex = currentList.indexOf(dropTargetData);
+                let draggedIndex = -1;
+                let dropTargetIndex = -1;
+
+                // Find indices based on whether items are strings or objects
+                if (typeof draggedData === 'string') {
+                    draggedIndex = currentList.indexOf(draggedData);
+                    dropTargetIndex = currentList.indexOf(dropTargetName);
+                } else { // Item is an object (like anime)
+                    draggedIndex = currentList.findIndex(item => item.name === draggedData.name);
+                    dropTargetIndex = currentList.findIndex(item => item.name === dropTargetName);
+                }
 
                 if (draggedIndex > -1 && dropTargetIndex > -1) {
                     const [removed] = currentList.splice(draggedIndex, 1);
@@ -299,9 +327,9 @@ document.addEventListener('DOMContentLoaded', () => {
             const emptyMessage = document.createElement('li');
             emptyMessage.className = 'empty-message';
             const messageText = type === 'projects' || type === 'upcoming' ? 'No projects here yet! Add your first project above.' :
-                                type === 'watching' || type === 'completed' ? 'No anime here yet! Add your first anime above.' :
-                                type === 'accounts' ? 'No accounts saved yet! Add your first account above.' :
-                                'No notes here yet! Add your first note above.';
+                                 type === 'watching' || type === 'completed' ? 'No anime here yet! Add your first anime above.' :
+                                 type === 'accounts' ? 'No accounts saved yet! Add your first account above.' :
+                                 'No notes here yet! Add your first note above.';
             emptyMessage.textContent = messageText;
             ul.appendChild(emptyMessage);
         } else {
@@ -338,22 +366,40 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        const list = getList(type);
-        // Prevent adding duplicates
-        if (list.includes(value)) {
-            alert('This item already exists in the list!'); // Or use a custom toast/modal
+        let list = getList(type);
+        let itemToAdd;
+        let isDuplicate = false;
+
+        if (type === 'watching' || type === 'completed') {
+            // For anime, check for duplicate names across both lists
+            const allAnime = getList('watching').concat(getList('completed'));
+            isDuplicate = allAnime.some(item => (typeof item === 'string' ? item === value : item.name === value));
+            itemToAdd = { name: value, completed: (type === 'completed') }; // Store anime as objects
+        } else {
+            isDuplicate = list.includes(value);
+            itemToAdd = value; // Other lists store strings
+        }
+
+        if (isDuplicate) {
+            showConfirmModal('Duplicate Entry', 'This item already exists in the list!', () => {}, 'OK', 'Dismiss');
             input.classList.add('input-error');
             setTimeout(() => {
                 input.classList.remove('input-error');
             }, 1500);
             return;
         }
-        list.push(value);
+
+        list.push(itemToAdd);
         saveList(type, list);
         input.value = '';
         renderGenericList(type);
+        // If adding to watching/completed, re-render both to update counts/status
+        if (type === 'watching' || type === 'completed') {
+            renderGenericList(type === 'watching' ? 'completed' : 'watching');
+        }
         input.focus();
     };
+
 
     // Updated clearList to use custom modal
     window.clearList = function(type) {
@@ -363,13 +409,22 @@ document.addEventListener('DOMContentLoaded', () => {
             () => { // onConfirm callback
                 saveList(type, []);
                 renderGenericList(type);
+                // Re-render other anime list if current list is watching/completed
+                if (type === 'watching' || type === 'completed') {
+                    renderGenericList(type === 'watching' ? 'completed' : 'watching');
+                }
             },
             'Yes, Clear All',
             'No, Keep It'
         );
     };
 
-    function editGenericItem(li, oldName, type) {
+    function editGenericItem(li, oldItemData, type) {
+        // Extract oldName and old 'completed' status if it's an object
+        const oldName = typeof oldItemData === 'string' ? oldItemData : oldItemData.name;
+        const oldCompletedStatus = typeof oldItemData === 'object' ? oldItemData.completed : undefined;
+
+
         li.innerHTML = '';
         li.classList.add('editing-item');
         li.removeAttribute('draggable');
@@ -394,17 +449,41 @@ document.addEventListener('DOMContentLoaded', () => {
 
             let list = getList(type);
             // Check for duplicates during edit
-            if (newName !== oldName && list.includes(newName)) {
-                alert('An item with this name already exists!');
+            let isDuplicate = false;
+            if (type === 'watching' || type === 'completed') {
+                 // For anime, check for duplicate names across *all* anime lists, excluding the original name
+                const allAnime = getList('watching').concat(getList('completed'));
+                isDuplicate = allAnime.some(item => {
+                    const itemName = typeof item === 'string' ? item : item.name;
+                    return itemName === newName && itemName !== oldName;
+                });
+            } else {
+                isDuplicate = list.some(item => item === newName && item !== oldName);
+            }
+
+
+            if (isDuplicate) {
+                showConfirmModal('Duplicate Entry', 'An item with this name already exists!', () => {}, 'OK', 'Dismiss');
                 nameInput.classList.add('input-error');
                 setTimeout(() => { nameInput.classList.remove('input-error'); }, 1500);
                 return;
             }
 
-            list = list.map(item => item === oldName ? newName : item);
+            list = list.map(item => {
+                const currentItemName = typeof item === 'string' ? item : item.name;
+                if (currentItemName === oldName) {
+                    // Preserve existing structure (string or object)
+                    return typeof item === 'string' ? newName : { name: newName, completed: oldCompletedStatus };
+                }
+                return item;
+            });
             saveList(type, list);
             li.classList.remove('editing-item');
             renderGenericList(type);
+            // Re-render related anime list if editing from watching/completed
+            if (type === 'watching' || type === 'completed') {
+                renderGenericList(type === 'watching' ? 'completed' : 'watching');
+            }
         };
 
         const cancelBtn = document.createElement('button');
@@ -634,7 +713,7 @@ document.addEventListener('DOMContentLoaded', () => {
         let items = getBookmarkList(storageKey);
         // Prevent adding duplicates
         if (items.some(item => item.name === name && item.url === url)) {
-            alert('A bookmark with this name and URL already exists!');
+            showConfirmModal('Duplicate Bookmark', 'A bookmark with this name and URL already exists!', () => {}, 'OK', 'Dismiss');
             nameInput.classList.add('input-error');
             urlInput.classList.add('input-error');
             setTimeout(() => {
@@ -653,21 +732,7 @@ document.addEventListener('DOMContentLoaded', () => {
         nameInput.focus();
     };
 
-    // Updated deleteBookmark to use custom modal
-    function deleteBookmark(name, url, listId, storageKey, type) {
-        showConfirmModal(
-            `Delete Bookmark`,
-            `Are you sure you want to delete "${name}"?`,
-            () => { // onConfirm callback
-                let items = getBookmarkList(storageKey);
-                items = items.filter(item => !(item.name === name && item.url === url));
-                saveBookmarkList(storageKey, items);
-                renderBookmarkList(listId, storageKey, type);
-            },
-            'Delete',
-            'Cancel'
-        );
-    }
+    // Updated deleteBookmark is now handled by createBookmarkElement's delete button logic.
 
     // Updated clearBookmarkList to use custom modal
     window.clearBookmarkList = function(listId, storageKey, type) {
@@ -719,7 +784,7 @@ document.addEventListener('DOMContentLoaded', () => {
             let items = getBookmarkList(storageKey);
             // Check for duplicates during edit
             if ((newName !== oldName || newUrl !== oldUrl) && items.some(item => item.name === newName && item.url === newUrl)) {
-                alert('A bookmark with this name and URL already exists!');
+                showConfirmModal('Duplicate Bookmark', 'A bookmark with this name and URL already exists!', () => {}, 'OK', 'Dismiss');
                 nameInput.classList.add('input-error');
                 urlInput.classList.add('input-error');
                 setTimeout(() => {
@@ -765,7 +830,7 @@ document.addEventListener('DOMContentLoaded', () => {
         'bookmarks_entertainment', 'bookmarks_entertainment_lastUpdated'
     ];
 
-    function exportData() {
+    window.exportData = function() { // Make globally accessible
         const data = {};
         localStorageKeys.forEach(key => {
             const item = localStorage.getItem(key);
@@ -794,7 +859,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // Updated importData to use custom modal for confirmation
-    function importData(event) {
+    window.importData = function(event) { // Make globally accessible
         const file = event.target.files[0];
         if (!file) {
             return;
